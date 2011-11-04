@@ -1,0 +1,40 @@
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+</style>
+
+<script>	
+function saveURLS() {
+	var newGroupName = document.getElementById("newGroup").value;
+	chrome.tabs.getAllInWindow(null,function(tabs){
+		var urls = [];
+		for(var i = 0; i < tabs.length; i++){
+			var tab = tabs[i];
+			urls.push(tab.url);
+		}
+		localStorage.setItem(newGroupName,urls.join('|GR0|_|p3R|'));
+	});
+	var groups = localStorage.getItem('groupList');
+	if(groups != null) {
+		groups = groups.split('|GR0|_|p3R|');
+		groups.push(newGroupName);
+		localStorage.setItem('groupList', groups.join('|GR0|_|p3R|'));
+	} else {
+		groups = [];
+		groups.push(newGroupName);
+		localStorage.setItem('groupList', groups.join('|GR0|_|p3R|'));
+	}
+	window.location.href="popup.html";
+}
+</script>
+
+<body>
+	<h1>Input a new group name</h1>
+	<form>
+		<input type="text" id="newGroup" />
+		<input type="button" value="Save" onclick="saveURLS()"/>
+	</form>
+</body>

@@ -1,0 +1,72 @@
+
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+#mainButtons {
+	left:100px;
+}
+</style>
+
+<script>
+	function saveTabs() {
+		window.location.href="saveNewGroup.html";
+	}
+	
+	function openTabs(groupName) {
+		var urls = localStorage.getItem(groupName).split('|GR0|_|p3R|');
+		for(var i = 0; i < urls.length; i++)
+		{
+			var currentURL = urls[i];
+			chrome.tabs.create({url : currentURL});
+		}
+	}
+	
+	function clearGroups() {
+		localStorage.clear();
+		window.location.href="popup.html";
+	}
+	
+	function removeGroup(groupName) {
+		localStorage.removeItem(groupName);
+		var groups = localStorage.getItem('groupList').split('|GR0|_|p3R|');
+		var place = groups.indexOf(groupName);
+		if(place == 0) {
+			groups.shift();
+		} else if(place == groups.length-1) {
+			groups.pop();
+		} else {
+		firstHalf = groups.slice(0, place);
+		secondHalf = groups.slice(place + 1, groups.length);
+		groups = firstHalf.concat(secondHalf);
+		}
+		if (groups.length == 0) {
+			localStorage.removeItem('groupList') 
+		} else {
+			localStorage.setItem('groupList', groups.join('|GR0|_|p3R|'));
+		}
+		window.location.href="popup.html";
+	}
+</script>
+
+<body>
+	<div id="mainButtons">
+		<input type="button" value="Save URLs" onclick= "saveTabs()" />
+		<input type="button" value="Clear Groups" onclick="clearGroups()" />
+	</div>
+	<script>
+		var groupNames = localStorage.getItem('groupList');
+		if(groupNames != null) {
+			document.write('<h2>Previously Saved Groups</h2><ul>');
+			groupNames = groupNames.split('|GR0|_|p3R|');
+			for(var i = 0; i < groupNames.length; i++) {
+				var name = groupNames[i];
+				var inputString = '<li><input type=\"button\" value=\"'+name+'\" onclick=\"openTabs(\''+name+'\')\" /> <input type="button" value=" - " onclick="removeGroup(\''+name+'\')" /></li>';
+				document.write(inputString);
+			}
+			document.write('</ul>');
+		}
+	</script>
+</body>
